@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 interface Competitor {
   _id: string;
   name: string;
@@ -36,9 +38,35 @@ export default function StatsHeader({ competitors }: StatsHeaderProps) {
                   Food Saving App Niche
                 </span>
               </div>
-              <h1 className="headline text-4xl lg:text-5xl text-white">
-                Ad <span className="text-accent">Intel</span>
-              </h1>
+              <div className="flex items-center gap-4">
+                <h1 className="headline text-4xl lg:text-5xl text-white">
+                  Ad <span className="text-accent">Intel</span>
+                </h1>
+                <Link
+                  href="/brief"
+                  className="p-3 bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-colors group"
+                  title="View Ad Intelligence Brief"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-[var(--color-text-secondary)] group-hover:text-[var(--color-accent)] transition-colors"
+                  >
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                </Link>
+              </div>
               <p className="text-[var(--color-text-secondary)] mt-2 text-lg">
                 Track competitors. Steal winning strategies.
               </p>
