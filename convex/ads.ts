@@ -58,6 +58,34 @@ export const getByArchiveId = query({
   },
 });
 
+export const listDcoVersions = query({
+  args: { adArchiveId: v.string() },
+  handler: async (ctx, args) => {
+    const versions = await ctx.db
+      .query("dcoVersions")
+      .withIndex("by_archive_id", (q) => q.eq("adArchiveId", args.adArchiveId))
+      .collect();
+
+    return versions.sort((a, b) => a.versionIndex - b.versionIndex);
+  },
+});
+
+export const listDcoAdsByCompetitor = query({
+  args: {
+    competitorId: v.id("competitors"),
+  },
+  handler: async (ctx, args) => {
+    const ads = await ctx.db
+      .query("ads")
+      .withIndex("by_competitor", (q) => q.eq("competitorId", args.competitorId))
+      .collect();
+
+    return ads
+      .filter((ad) => ad.displayFormat === "DCO")
+      .sort((a, b) => b.daysRunning - a.daysRunning || a.adArchiveId.localeCompare(b.adArchiveId));
+  },
+});
+
 // Create a new ad
 export const create = mutation({
   args: {
@@ -143,6 +171,124 @@ export const createMany = mutation({
       }
     }
     return ids;
+  },
+});
+
+export const upsertDcoVersions = mutation({
+  args: {
+    adArchiveId: v.string(),
+    versions: v.array(v.object({
+      versionIndex: v.number(),
+      versionLabel: v.string(),
+      bodyText: v.string(),
+      ctaText: v.optional(v.string()),
+      headline: v.optional(v.string()),
+      caption: v.optional(v.string()),
+      landingPageUrl: v.optional(v.string()),
+      videoUrl: v.optional(v.string()),
+      posterUrl: v.optional(v.string()),
+      thumbnailUrl: v.optional(v.string()),
+      creativeFingerprint: v.optional(v.string()),
+      extractedAt: v.string(),
+      source: v.string(),
+    })),
+  },
+  handler: async (ctx, args) => {
+    const ad = await ctx.db
+      .query("ads")
+      .withIndex("by_ad_id", (q) => q.eq("adArchiveId", args.adArchiveId))
+      .first();
+
+    if (!ad) {
+      throw new Error(`Ad not found for archive ID ${args.adArchiveId}`);
+    }
+
+    const existing = await ctx.db
+      .query("dcoVersions")
+      .withIndex("by_archive_id", (q) => q.eq("adArchiveId", args.adArchiveId))
+      .collect();
+
+    const existingByIndex = new Map(existing.map((doc) => [doc.versionIndex, doc]));
+    const ids = [];
+
+    for (const version of args.versions) {
+      const payload = {
+        adId: ad._id,
+        adArchiveId: ad.adArchiveId,
+        competitorId: ad.competitorId,
+        ...version,
+      };
+
+      const match = existingByIndex.get(version.versionIndex);
+      if (match) {
+        await ctx.db.patch(match._id, payload);
+        ids.push(match._id);
+      } else {
+        const id = await ctx.db.insert("dcoVersions", payload);
+        ids.push(id);
+      }
+    }
+
+    return {
+      adId: ad._id,
+      count: ids.length,
+      ids,
+    };
+  },
+});
+
+export const dedupeDcoVersions = mutation({
+  args: {
+    adArchiveIds: v.array(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const results = [];
+
+    for (const adArchiveId of args.adArchiveIds) {
+      const rows = await ctx.db
+        .query("dcoVersions")
+        .withIndex("by_archive_id", (q) => q.eq("adArchiveId", adArchiveId))
+        .collect();
+
+      const groups = new Map<string, typeof rows>();
+      for (const row of rows) {
+        const key = `${row.versionIndex}|${row.versionLabel}`;
+        const group = groups.get(key) || [];
+        group.push(row);
+        groups.set(key, group);
+      }
+
+      let deleted = 0;
+      for (const group of groups.values()) {
+        if (group.length <= 1) continue;
+        group.sort((a, b) => b._creationTime - a._creationTime);
+        const [, ...dupes] = group;
+        for (const dupe of dupes) {
+          await ctx.db.delete(dupe._id);
+          deleted += 1;
+        }
+      }
+
+      results.push({
+        adArchiveId,
+        before: rows.length,
+        after: rows.length - deleted,
+        deleted,
+      });
+    }
+
+    return results;
+  },
+});
+
+export const removeAllDcoVersions = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const rows = await ctx.db.query("dcoVersions").collect();
+    for (const row of rows) {
+      await ctx.db.delete(row._id);
+    }
+    return { deleted: rows.length };
   },
 });
 

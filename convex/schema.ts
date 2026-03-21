@@ -63,6 +63,27 @@ export default defineSchema({
     .index("by_winner", ["isWinner"])
     .index("by_ad_id", ["adArchiveId"]),
 
+  dcoVersions: defineTable({
+    adId: v.id("ads"),
+    adArchiveId: v.string(),
+    competitorId: v.id("competitors"),
+    versionIndex: v.number(),
+    versionLabel: v.string(),
+    bodyText: v.string(),
+    ctaText: v.optional(v.string()),
+    headline: v.optional(v.string()),
+    caption: v.optional(v.string()),
+    landingPageUrl: v.optional(v.string()),
+    videoUrl: v.optional(v.string()),
+    posterUrl: v.optional(v.string()),
+    thumbnailUrl: v.optional(v.string()),
+    creativeFingerprint: v.optional(v.string()),
+    extractedAt: v.string(),
+    source: v.string(),
+  })
+    .index("by_ad", ["adId"])
+    .index("by_archive_id", ["adArchiveId"]),
+
   // Ad Intelligence Briefs
   briefs: defineTable({
     title: v.string(),
@@ -120,6 +141,88 @@ export default defineSchema({
 
     // Full markdown content
     fullMarkdown: v.string(),
+
+    // Winner-focused insight blocks
+    normalWinnerAds: v.optional(v.number()),
+    dcoAds: v.optional(v.number()),
+    winnerInsights: v.optional(v.array(v.object({
+      title: v.string(),
+      finding: v.string(),
+      dataPoint: v.string(),
+    }))),
+    accountPlaybooks: v.optional(v.array(v.object({
+      competitorId: v.id("competitors"),
+      name: v.string(),
+      category: v.string(),
+      normalWinnerAds: v.number(),
+      totalWinnerAds: v.number(),
+      topFormats: v.array(v.string()),
+      topHooks: v.array(v.string()),
+      notes: v.array(v.string()),
+    }))),
+    topWinningAds: v.optional(v.array(v.object({
+      competitorId: v.id("competitors"),
+      competitorName: v.string(),
+      adArchiveId: v.string(),
+      adLibraryUrl: v.string(),
+      format: v.string(),
+      daysRunning: v.number(),
+      hook: v.string(),
+      headline: v.optional(v.string()),
+      ctaText: v.optional(v.string()),
+      landingPageUrl: v.optional(v.string()),
+    }))),
+    dcoTopAds: v.optional(v.array(v.object({
+      competitorId: v.id("competitors"),
+      competitorName: v.string(),
+      adArchiveId: v.string(),
+      adLibraryUrl: v.string(),
+      daysRunning: v.number(),
+      bodyText: v.string(),
+      ctaText: v.optional(v.string()),
+      landingPageUrl: v.optional(v.string()),
+    }))),
+    combinedTopAds: v.optional(v.array(v.object({
+      competitorId: v.id("competitors"),
+      competitorName: v.string(),
+      adArchiveId: v.string(),
+      adLibraryUrl: v.string(),
+      sourceType: v.string(),
+      format: v.string(),
+      daysRunning: v.number(),
+      summary: v.string(),
+      ctaText: v.optional(v.string()),
+      landingPageUrl: v.optional(v.string()),
+    }))),
+    accountComparisons: v.optional(v.array(v.object({
+      competitorId: v.id("competitors"),
+      name: v.string(),
+      category: v.string(),
+      normalWinnerAds: v.number(),
+      dcoWinnerAds: v.number(),
+      totalWinnerAds: v.number(),
+      bestNormalDays: v.number(),
+      bestDcoDays: v.number(),
+    }))),
+    winnerComparisons: v.optional(v.array(v.object({
+      title: v.string(),
+      regularFinding: v.string(),
+      dcoFinding: v.string(),
+      takeaway: v.string(),
+    }))),
+    dcoSummary: v.optional(v.object({
+      totalAds: v.number(),
+      winnerAds: v.number(),
+      topCompetitors: v.array(v.object({
+        name: v.string(),
+        count: v.number(),
+        winners: v.number(),
+      })),
+      commonCtas: v.array(v.object({
+        cta: v.string(),
+        count: v.number(),
+      })),
+    })),
   })
     .index("by_date", ["generatedAt"]),
 });
