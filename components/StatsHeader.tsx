@@ -22,36 +22,66 @@ export default function StatsHeader({ competitors }: StatsHeaderProps) {
 
   const activeCount = competitors.filter((c) => c.status === "Active").length;
 
-  // Find longest running (Alex Hormozi has 1+ year)
-  const longestRunning = competitors.find((c) =>
-    c.adNotes?.includes("1+ YEAR") || c.adNotes?.includes("1 year")
-  );
-
   return (
-    <header className="gradient-bg py-8 px-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold mb-2">Competitor Ad Intelligence</h1>
-        <p className="text-purple-200">Food Saving App Niche - Meta Ads Analysis</p>
+    <header className="border-b border-[var(--color-border)]">
+      {/* Top bar with title */}
+      <div className="px-6 lg:px-12 py-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+            {/* Title section */}
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <span className="badge badge-accent">Live</span>
+                <span className="text-[var(--color-text-secondary)] text-sm">
+                  Food Saving App Niche
+                </span>
+              </div>
+              <h1 className="headline text-4xl lg:text-5xl text-white">
+                Ad <span className="text-accent">Intel</span>
+              </h1>
+              <p className="text-[var(--color-text-secondary)] mt-2 text-lg">
+                Track competitors. Steal winning strategies.
+              </p>
+            </div>
 
-        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-            <div className="text-3xl font-bold">{competitors.length}</div>
-            <div className="text-purple-200 text-sm">Competitors</div>
-          </div>
+            {/* Stats row */}
+            <div className="flex gap-8 lg:gap-12">
+              <div className="text-right">
+                <div className="stat-number text-4xl lg:text-5xl text-white">
+                  {competitors.length}
+                </div>
+                <div className="text-[var(--color-text-secondary)] text-sm uppercase tracking-wider mt-1">
+                  Competitors
+                </div>
+              </div>
 
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-            <div className="text-3xl font-bold text-green-400">{totalWinners}</div>
-            <div className="text-purple-200 text-sm">Winner Ads</div>
-          </div>
+              <div className="text-right">
+                <div className="stat-number text-4xl lg:text-5xl text-winner">
+                  {totalWinners}
+                </div>
+                <div className="text-[var(--color-text-secondary)] text-sm uppercase tracking-wider mt-1">
+                  Winner Ads
+                </div>
+              </div>
 
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-            <div className="text-3xl font-bold">{activeCount}</div>
-            <div className="text-purple-200 text-sm">Active</div>
-          </div>
+              <div className="text-right">
+                <div className="stat-number text-4xl lg:text-5xl text-accent">
+                  {activeCount}
+                </div>
+                <div className="text-[var(--color-text-secondary)] text-sm uppercase tracking-wider mt-1">
+                  Active
+                </div>
+              </div>
 
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-            <div className="text-3xl font-bold text-yellow-400">1yr+</div>
-            <div className="text-purple-200 text-sm">Longest Running</div>
+              <div className="text-right hidden sm:block">
+                <div className="stat-number text-4xl lg:text-5xl text-secondary-accent">
+                  1yr+
+                </div>
+                <div className="text-[var(--color-text-secondary)] text-sm uppercase tracking-wider mt-1">
+                  Longest Run
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

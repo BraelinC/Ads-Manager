@@ -3,30 +3,252 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 17, 24, 39;
-  --background-end-rgb: 17, 24, 39;
+  /* Bold color palette */
+  --color-bg: #0a0a0a;
+  --color-surface: #141414;
+  --color-surface-elevated: #1a1a1a;
+  --color-border: #2a2a2a;
+  --color-border-bright: #3a3a3a;
+
+  /* Accent: Acid lime - distinctive, bold */
+  --color-accent: #c8ff00;
+  --color-accent-dim: rgba(200, 255, 0, 0.15);
+  --color-accent-muted: rgba(200, 255, 0, 0.6);
+
+  /* Secondary: Sharp coral for warmth */
+  --color-secondary: #ff6b35;
+  --color-secondary-dim: rgba(255, 107, 53, 0.15);
+
+  /* Status colors */
+  --color-winner: #00ff88;
+  --color-video: #ff3366;
+  --color-image: #3399ff;
+
+  /* Text */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #888888;
+  --color-text-muted: #555555;
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-  min-height: 100vh;
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-bg);
+  }
 }
 
-.gradient-bg {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+@layer components {
+  .font-display {
+    font-family: var(--font-display), system-ui, sans-serif;
+  }
+
+  .font-body {
+    font-family: var(--font-body), system-ui, sans-serif;
+  }
+
+  /* Bold headline treatment */
+  .headline {
+    @apply font-display font-bold tracking-tight;
+    letter-spacing: -0.02em;
+  }
+
+  /* Acid accent button */
+  .btn-primary {
+    @apply px-5 py-2.5 font-medium transition-all duration-150;
+    background: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 0 24px rgba(200, 255, 0, 0.4);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  /* Ghost button */
+  .btn-ghost {
+    @apply px-5 py-2.5 font-medium transition-all duration-150;
+    background: transparent;
+    border: 1px solid var(--color-border-bright);
+    color: var(--color-text-primary);
+  }
+
+  .btn-ghost:hover {
+    background: var(--color-surface-elevated);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  /* Card with sharp corners */
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    transition: all 0.2s ease;
+  }
+
+  .card:hover {
+    border-color: var(--color-border-bright);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .card-interactive:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 30px rgba(200, 255, 0, 0.1);
+  }
+
+  /* Badge styles */
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 text-xs font-medium uppercase tracking-wider;
+  }
+
+  .badge-winner {
+    background: rgba(0, 255, 136, 0.15);
+    color: var(--color-winner);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+  }
+
+  .badge-video {
+    background: rgba(255, 51, 102, 0.15);
+    color: var(--color-video);
+  }
+
+  .badge-image {
+    background: rgba(51, 153, 255, 0.15);
+    color: var(--color-image);
+  }
+
+  .badge-accent {
+    background: var(--color-accent-dim);
+    color: var(--color-accent);
+  }
+
+  .badge-secondary {
+    background: var(--color-secondary-dim);
+    color: var(--color-secondary);
+  }
+
+  /* Stat number treatment */
+  .stat-number {
+    @apply font-display font-bold;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+  }
+
+  /* Accent underline */
+  .accent-underline {
+    position: relative;
+    display: inline-block;
+  }
+
+  .accent-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--color-accent);
+  }
+
+  /* Glow effects */
+  .glow-accent {
+    box-shadow: 0 0 20px rgba(200, 255, 0, 0.3);
+  }
+
+  .glow-winner {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+  }
 }
 
-.card-hover {
-  @apply transition-all duration-200;
+@layer utilities {
+  .text-accent {
+    color: var(--color-accent);
+  }
+
+  .text-secondary-accent {
+    color: var(--color-secondary);
+  }
+
+  .text-winner {
+    color: var(--color-winner);
+  }
+
+  .text-muted {
+    color: var(--color-text-secondary);
+  }
+
+  .bg-surface {
+    background: var(--color-surface);
+  }
+
+  .bg-surface-elevated {
+    background: var(--color-surface-elevated);
+  }
+
+  .border-accent {
+    border-color: var(--color-accent);
+  }
+
+  .border-bright {
+    border-color: var(--color-border-bright);
+  }
+
+  /* Animation utilities */
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    from {
+      box-shadow: 0 0 10px rgba(200, 255, 0, 0.2);
+    }
+    to {
+      box-shadow: 0 0 20px rgba(200, 255, 0, 0.4);
+    }
+  }
+
+  .animate-pulse-winner {
+    animation: pulse-winner 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-winner {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
 }
 
-.card-hover:hover {
-  @apply -translate-y-1 shadow-xl;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-bright);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
 }

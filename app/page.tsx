@@ -16,8 +16,11 @@ export default function Home() {
 
   if (!competitors) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-[var(--color-text-secondary)] text-sm uppercase tracking-wider">Loading</span>
+        </div>
       </div>
     );
   }
@@ -32,41 +35,48 @@ export default function Home() {
     ? competitors.find((c) => c._id === selectedId)
     : null;
 
-  const filters: { label: string; value: Category }[] = [
-    { label: "All", value: "all" },
-    { label: "Ad Leaders", value: "Ad Leader" },
-    { label: "Micro-Niche", value: "Micro-Niche" },
-    { label: "Macro-Niche", value: "Macro-Niche" },
-    { label: "Has Winners", value: "hasWinners" },
+  const filters: { label: string; value: Category; count?: number }[] = [
+    { label: "All", value: "all", count: competitors.length },
+    { label: "Ad Leaders", value: "Ad Leader", count: competitors.filter(c => c.category === "Ad Leader").length },
+    { label: "Micro-Niche", value: "Micro-Niche", count: competitors.filter(c => c.category === "Micro-Niche").length },
+    { label: "Macro-Niche", value: "Macro-Niche", count: competitors.filter(c => c.category === "Macro-Niche").length },
+    { label: "Has Winners", value: "hasWinners", count: competitors.filter(c => c.winnerAds).length },
   ];
 
   return (
-    <main className="min-h-screen bg-gray-900 text-white">
+    <main className="min-h-screen bg-[var(--color-bg)]">
       {/* Header */}
       <StatsHeader competitors={competitors} />
 
       {/* Filters */}
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        <div className="flex flex-wrap gap-3">
-          {filters.map((f) => (
-            <button
-              key={f.value}
-              onClick={() => setFilter(f.value)}
-              className={`px-4 py-2 rounded-full transition-all ${
-                filter === f.value
-                  ? "bg-purple-600 text-white"
-                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
+      <div className="border-b border-[var(--color-border)]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="flex gap-1 py-4 overflow-x-auto">
+            {filters.map((f) => (
+              <button
+                key={f.value}
+                onClick={() => setFilter(f.value)}
+                className={`px-4 py-2 text-sm font-medium transition-all whitespace-nowrap ${
+                  filter === f.value
+                    ? "bg-[var(--color-accent)] text-[var(--color-bg)]"
+                    : "text-[var(--color-text-secondary)] hover:text-white hover:bg-[var(--color-surface)]"
+                }`}
+              >
+                {f.label}
+                {f.count !== undefined && (
+                  <span className={`ml-2 ${filter === f.value ? "opacity-70" : "opacity-50"}`}>
+                    {f.count}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Competitor Grid */}
-      <div className="max-w-7xl mx-auto px-6 pb-12">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredCompetitors.map((competitor) => (
             <CompetitorCard
               key={competitor._id}
@@ -77,8 +87,10 @@ export default function Home() {
         </div>
 
         {filteredCompetitors.length === 0 && (
-          <div className="text-center py-12 text-gray-400">
-            No competitors match this filter.
+          <div className="text-center py-16">
+            <div className="text-[var(--color-text-muted)] text-lg">
+              No competitors match this filter.
+            </div>
           </div>
         )}
       </div>

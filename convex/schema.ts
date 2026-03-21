@@ -19,12 +19,47 @@ export default defineSchema({
     dateAdded: v.string(),
     adResearch: v.optional(v.string()),
     logoUrl: v.optional(v.string()),
-    // Ad analysis fields
-    winnerAds: v.optional(v.string()),        // Ad IDs running 30+ days (proven winners)
-    swipeInsights: v.optional(v.string()),    // What works: hooks, angles, formats
-    adNotes: v.optional(v.string()),          // General notes, what to test
+    winnerAds: v.optional(v.string()),
+    swipeInsights: v.optional(v.string()),
+    adNotes: v.optional(v.string()),
   })
     .index("by_category", ["category"])
     .index("by_status", ["status"])
     .index("by_name", ["name"]),
+
+  // Individual ads with full creative data
+  ads: defineTable({
+    competitorId: v.id("competitors"),
+    adArchiveId: v.string(),           // Facebook ad ID
+    adLibraryUrl: v.string(),          // Direct link to ad
+
+    // Creative content
+    headline: v.optional(v.string()),   // Ad title/headline
+    bodyText: v.string(),               // Full ad copy
+    ctaText: v.optional(v.string()),    // CTA button text
+    ctaType: v.optional(v.string()),    // CTA type
+    displayFormat: v.string(),          // VIDEO, IMAGE, CAROUSEL, etc.
+
+    // Media
+    videoHdUrl: v.optional(v.string()), // HD video URL
+    videoSdUrl: v.optional(v.string()), // SD video URL
+    thumbnailUrl: v.optional(v.string()), // Video thumbnail
+    imageUrl: v.optional(v.string()),   // Image URL (for image ads)
+
+    // Metadata
+    landingPageUrl: v.optional(v.string()),
+    platforms: v.array(v.string()),     // FACEBOOK, INSTAGRAM, MESSENGER
+    startDate: v.string(),              // When ad started
+    endDate: v.optional(v.string()),    // When ad ends (if set)
+    isActive: v.boolean(),
+
+    // Analysis
+    isWinner: v.boolean(),              // Running 30+ days
+    daysRunning: v.number(),            // How many days active
+    position: v.optional(v.number()),   // Position in impressions ranking
+  })
+    .index("by_competitor", ["competitorId"])
+    .index("by_format", ["displayFormat"])
+    .index("by_winner", ["isWinner"])
+    .index("by_ad_id", ["adArchiveId"]),
 });

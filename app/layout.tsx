@@ -1,13 +1,23 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Space_Grotesk, DM_Sans } from 'next/font/google'
 import './globals.css'
 import { ConvexClientProvider } from './ConvexClientProvider'
 
-const inter = Inter({ subsets: ['latin'] })
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-display',
+  display: 'swap',
+})
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  variable: '--font-body',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
-  title: 'Competitor Ad Intelligence',
-  description: 'Food Saving App Niche - Meta Ads Analysis',
+  title: 'Ad Intel — Competitor Analysis',
+  description: 'Track competitor ads. Steal winning strategies.',
 }
 
 export default function RootLayout({
@@ -16,8 +26,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className={`${spaceGrotesk.variable} ${dmSans.variable}`}>
+      <body className="font-body antialiased">
         <ConvexClientProvider>
           {children}
         </ConvexClientProvider>

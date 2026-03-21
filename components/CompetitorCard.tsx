@@ -17,16 +17,16 @@ interface CompetitorCardProps {
   onSelect: () => void;
 }
 
-function getCategoryColor(category: string) {
+function getCategoryStyle(category: string) {
   switch (category) {
     case "Ad Leader":
-      return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
+      return "bg-[var(--color-secondary-dim)] text-[var(--color-secondary)] border-[var(--color-secondary)]";
     case "Micro-Niche":
-      return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+      return "bg-[rgba(51,153,255,0.15)] text-[#3399ff] border-[#3399ff]";
     case "Macro-Niche":
-      return "bg-green-500/20 text-green-400 border-green-500/30";
+      return "bg-[var(--color-accent-dim)] text-[var(--color-accent)] border-[var(--color-accent)]";
     default:
-      return "bg-gray-500/20 text-gray-400 border-gray-500/30";
+      return "bg-[var(--color-surface-elevated)] text-[var(--color-text-secondary)]";
   }
 }
 
@@ -44,15 +44,15 @@ function extractHooks(insights?: string): string[] {
 
 function getFormatBadges(insights?: string) {
   if (!insights) return [];
-  const formats: { name: string; color: string }[] = [];
+  const formats: { name: string; className: string }[] = [];
   if (insights.includes("VIDEO"))
-    formats.push({ name: "VIDEO", color: "bg-red-500/20 text-red-400" });
+    formats.push({ name: "VIDEO", className: "badge-video" });
   if (insights.includes("IMAGE"))
-    formats.push({ name: "IMAGE", color: "bg-blue-500/20 text-blue-400" });
+    formats.push({ name: "IMAGE", className: "badge-image" });
   if (insights.includes("DCO"))
-    formats.push({ name: "DCO", color: "bg-purple-500/20 text-purple-400" });
+    formats.push({ name: "DCO", className: "bg-[rgba(147,51,234,0.15)] text-[#a855f7]" });
   if (insights.includes("DPA"))
-    formats.push({ name: "DPA", color: "bg-orange-500/20 text-orange-400" });
+    formats.push({ name: "DPA", className: "badge-secondary" });
   return formats;
 }
 
@@ -67,72 +67,87 @@ export default function CompetitorCard({
   const formats = getFormatBadges(competitor.swipeInsights);
 
   return (
-    <div className="card-hover bg-gray-800 rounded-2xl overflow-hidden border border-gray-700">
-      <div className="p-6">
+    <div
+      onClick={onSelect}
+      className="card card-interactive cursor-pointer group"
+    >
+      <div className="p-5">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            {competitor.logoUrl && (
+            {competitor.logoUrl ? (
               <img
                 src={competitor.logoUrl}
                 alt={competitor.name}
-                className="w-12 h-12 rounded-full object-cover"
+                className="w-12 h-12 rounded object-cover border border-[var(--color-border)]"
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = "none";
                 }}
               />
+            ) : (
+              <div className="w-12 h-12 rounded bg-[var(--color-surface-elevated)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-accent)] font-display font-bold text-xl">
+                {competitor.name.charAt(0)}
+              </div>
             )}
             <div>
-              <h3 className="font-bold text-lg">{competitor.name}</h3>
+              <h3 className="font-display font-bold text-lg text-white group-hover:text-[var(--color-accent)] transition-colors">
+                {competitor.name}
+              </h3>
               <span
-                className={`text-xs px-2 py-1 rounded-full border ${getCategoryColor(
-                  competitor.category
-                )}`}
+                className={`badge border ${getCategoryStyle(competitor.category)}`}
               >
                 {competitor.category}
               </span>
             </div>
           </div>
           <span
-            className={`w-3 h-3 rounded-full ${
-              competitor.status === "Active" ? "bg-green-500" : "bg-gray-500"
+            className={`w-2.5 h-2.5 rounded-full ${
+              competitor.status === "Active"
+                ? "bg-[var(--color-winner)] animate-pulse-winner"
+                : "bg-[var(--color-text-muted)]"
             }`}
           />
         </div>
 
         {/* Description */}
-        <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+        <p className="text-[var(--color-text-secondary)] text-sm mb-4 line-clamp-2">
           {competitor.description}
         </p>
 
         {/* Winner Ads */}
         {winnerCount > 0 ? (
-          <div className="mb-4 p-3 bg-green-500/10 rounded-lg border border-green-500/20">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-green-400 text-lg animate-pulse">★</span>
-              <span className="text-green-400 font-semibold">
-                {winnerCount} Winner Ad{winnerCount > 1 ? "s" : ""}
-              </span>
+          <div className="mb-4 p-3 bg-[rgba(0,255,136,0.08)] border border-[rgba(0,255,136,0.2)]">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-[var(--color-winner)] font-display font-bold text-2xl">
+                  {winnerCount}
+                </span>
+                <span className="text-[var(--color-winner)] text-sm font-medium">
+                  Winner{winnerCount > 1 ? "s" : ""}
+                </span>
+              </div>
+              <span className="badge badge-winner">30+ days</span>
             </div>
-            <div className="text-xs text-gray-400">Running 30+ days</div>
           </div>
         ) : (
-          <div className="mb-4 p-3 bg-gray-700/50 rounded-lg">
-            <span className="text-gray-500">No winner ads identified</span>
+          <div className="mb-4 p-3 bg-[var(--color-surface-elevated)] border border-[var(--color-border)]">
+            <span className="text-[var(--color-text-muted)] text-sm">
+              No winners yet
+            </span>
           </div>
         )}
 
         {/* Hooks */}
         {hooks.length > 0 && (
           <div className="mb-4">
-            <div className="text-xs text-gray-500 mb-2 uppercase tracking-wide">
+            <div className="text-[var(--color-text-muted)] text-xs uppercase tracking-wider mb-2">
               Top Hooks
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               {hooks.slice(0, 2).map((hook, i) => (
                 <div
                   key={i}
-                  className="text-sm text-purple-300 bg-purple-500/10 px-3 py-2 rounded-lg"
+                  className="text-sm text-white bg-[var(--color-surface-elevated)] px-3 py-2 border-l-2 border-[var(--color-accent)]"
                 >
                   &ldquo;{hook}&rdquo;
                 </div>
@@ -145,10 +160,7 @@ export default function CompetitorCard({
         {formats.length > 0 && (
           <div className="flex gap-2 mb-4">
             {formats.map((f, i) => (
-              <span
-                key={i}
-                className={`px-2 py-1 rounded text-xs ${f.color}`}
-              >
+              <span key={i} className={`badge ${f.className}`}>
                 {f.name}
               </span>
             ))}
@@ -156,21 +168,19 @@ export default function CompetitorCard({
         )}
 
         {/* Actions */}
-        <div className="flex gap-2">
-          <button
-            onClick={onSelect}
-            className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition"
-          >
-            View Details
+        <div className="flex gap-2 pt-2 border-t border-[var(--color-border)]">
+          <button className="flex-1 btn-primary text-sm">
+            View Ads
           </button>
           {competitor.adLibraryUrl && (
             <a
               href={competitor.adLibraryUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition"
+              onClick={(e) => e.stopPropagation()}
+              className="btn-ghost text-sm"
             >
-              Ad Library
+              Library
             </a>
           )}
         </div>
