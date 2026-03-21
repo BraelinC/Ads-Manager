@@ -9,6 +9,7 @@
  */
 
 import type * as ads from "../ads.js";
+import type * as briefs from "../briefs.js";
 import type * as competitors from "../competitors.js";
 
 import type {
@@ -19,6 +20,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   ads: typeof ads;
+  briefs: typeof briefs;
   competitors: typeof competitors;
 }>;
 
