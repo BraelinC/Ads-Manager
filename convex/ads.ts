@@ -175,6 +175,38 @@ export const deleteAll = mutation({
   },
 });
 
+// Fix competitorIds - migrate from old IDs to correct IDs
+export const fixCompetitorIds = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const idMapping: Record<string, string> = {
+      "j57fw9g67hx7bcw5dhttqb7sfs83b838": "j575xq8sdbs971r729bmehf3g183b3fp", // ReciMe
+      "j576w4b8wbrxpwd95veethb4j983ahff": "j57fp3v2pn1xjkvt12cwbaec9583b3mf", // Cal AI
+      "j571axfhf85yqb84hzfe2dae8x83a619": "j57adfswkj99sk7tv7tqbr1t6583a8tw", // Gronda
+      "j572d0z3fz3vf3qdkjqqe2pf0n83a211": "j57770ztx71j9jm24gg86pshgh83ahz2", // Flashfood
+      "j5772sh9fwq50dm5brgs2763tn83br55": "j57583wgeed4kpgtjrq81w34ax83b40d", // Misfits Market
+      "j575w04scfrr7d8c5npeagr1px83av0q": "j574qp7fk39whwz7nhp53snw1n83b6sz", // Alex Hormozi
+      "j57dmnr3eh3f41css1b4k0jq2d83addc": "j57eb0dz5zqs789x4f0f0jrg2x83aqeh", // DoorDash
+    };
+
+    const ads = await ctx.db.query("ads").collect();
+    let fixed = 0;
+
+    for (const ad of ads) {
+      const oldId = ad.competitorId as unknown as string;
+      const newId = idMapping[oldId];
+      if (newId) {
+        await ctx.db.patch(ad._id, {
+          competitorId: newId as any
+        });
+        fixed++;
+      }
+    }
+
+    return { total: ads.length, fixed };
+  },
+});
+
 // Get ad stats
 export const getStats = query({
   args: {},
