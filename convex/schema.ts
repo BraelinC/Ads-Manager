@@ -84,6 +84,20 @@ export default defineSchema({
     .index("by_ad", ["adId"])
     .index("by_archive_id", ["adArchiveId"]),
 
+  // Clips from screen recorder / imports
+  clips: defineTable({
+    title: v.string(),
+    url: v.string(),                          // R2 public URL
+    thumbnailUrl: v.optional(v.string()),
+    duration: v.optional(v.number()),         // seconds
+    fileSize: v.optional(v.number()),         // bytes
+    source: v.union(v.literal("recorded"), v.literal("uploaded"), v.literal("edited")),
+    tags: v.optional(v.array(v.string())),
+    createdAt: v.string(),
+  })
+    .index("by_date", ["createdAt"])
+    .index("by_source", ["source"]),
+
   // Ad Intelligence Briefs
   briefs: defineTable({
     title: v.string(),

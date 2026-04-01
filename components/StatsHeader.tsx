@@ -43,6 +43,13 @@ export default function StatsHeader({ competitors }: StatsHeaderProps) {
                   Ad <span className="text-accent">Intel</span>
                 </h1>
                 <Link
+                  href="/clips"
+                  className="px-4 py-3 bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-colors text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] text-sm font-medium"
+                  title="My Clips"
+                >
+                  Clips
+                </Link>
+                <Link
                   href="/brief"
                   className="p-3 bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-colors group"
                   title="View Ad Intelligence Brief"
